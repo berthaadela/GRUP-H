@@ -1,0 +1,239 @@
+package main
+
+import "fmt"
+
+// MAX_SAMPAH mendefinisikan ukuran maksimum array statis
+const MAX_SAMPAH = 100
+const MAX_METODE = 100
+
+type Sampah struct {
+	Jenis           string
+	Jumlah          int
+	DaurUlang       int
+	MetodeDaurUlang string
+}
+
+type Metode struct {
+	JenisSampah     string
+	MetodeDaurUlang string
+}
+
+type DaftarSampah [MAX_SAMPAH]Sampah
+
+var rekomMetode = [MAX_METODE]Metode{
+	{"plastik", "Recycle"},
+	{"kaca", "Recycle"},
+	{"kertas", "Reuse"},
+	{"logam", "Recycle"},
+	{"karet", "Recycle"},
+	{"kain", "Reuse"},
+	{"elektronik", "Recycle"},
+	{"kayu", "Reuse"},
+	{"organik", "Kompos"},
+	{"baterai", "Recycle"},
+	{"botol plastik", "Recycle"},
+	{"kardus", "Reuse"},
+	{"aluminium", "Recycle"},
+	{"koran", "Reuse"},
+	{"styrofoam", "Daur Ulang Khusus"},
+	{"kaleng", "Recycle"},
+	{"minyak jelantah", "Pengolahan Ulang"},
+	{"tekstil", "Reuse"},
+	{"pvc", "Recycle"},
+	// Sisa elemen array kosong
+}
+
+func CariMetodeDaurUlang(jenis string) (string, bool) {
+	for _, m := range rekomMetode {
+		if m.JenisSampah == jenis {
+			return m.MetodeDaurUlang, true
+		}
+	}
+	return "", false
+}
+
+func UrutkanJumlahDesc(T *DaftarSampah, n int) {
+	for i := 0; i < n-1; i++ {
+		idx_max := i
+		for j := i + 1; j < n; j++ {
+			if T[j].Jumlah > T[idx_max].Jumlah {
+				idx_max = j
+			}
+		}
+		T[i], T[idx_max] = T[idx_max], T[i]
+	}
+}
+
+func UrutkanJumlahAsc(T *DaftarSampah, n int) {
+	for i := 0; i < n-1; i++ {
+		idx_min := i
+		for j := i + 1; j < n; j++ {
+			if T[j].Jumlah < T[idx_min].Jumlah {
+				idx_min = j
+			}
+		}
+		T[i], T[idx_min] = T[idx_min], T[i]
+	}
+}
+
+func TambahSampah(T *DaftarSampah, n *int, jenis string, jumlah int, daurUlang int, metode string) {
+	ditemukan, idx := CariJenisSequential(*T, *n, jenis)
+	if ditemukan {
+		T[idx].Jumlah += jumlah
+		T[idx].DaurUlang += daurUlang
+		// Jika Anda ingin update metode juga saat update sampah, bisa ditambahkan di sini:
+		// T[idx].MetodeDaurUlang = metode
+		fmt.Printf("Jumlah untuk jenis '%s' telah diperbarui.\n", jenis)
+	} else {
+		T[*n] = Sampah{Jenis: jenis, Jumlah: jumlah, DaurUlang: daurUlang, MetodeDaurUlang: metode}
+		(*n)++
+		fmt.Printf("Sampah jenis '%s' telah ditambahkan.\n", jenis)
+	}
+}
+
+func CariJenisSequential(T DaftarSampah, n int, X string) (bool, int) {
+	for i := 0; i < n; i++ {
+		if T[i].Jenis == X {
+			return true, i
+		}
+	}
+	return false, -1
+}
+
+func HapusSampah(T *DaftarSampah, n *int, jenis string) {
+	ditemukan, idx := CariJenisSequential(*T, *n, jenis)
+	if !ditemukan {
+		fmt.Printf("Jenis sampah tidak ditemukan: %s\n", jenis)
+		return
+	}
+	for i := idx; i < *n-1; i++ {
+		T[i] = T[i+1]
+	}
+	(*n)--
+	fmt.Printf("Sampah dengan jenis %s telah dihapus.\n", jenis)
+}
+
+func TampilkanStatistik(T DaftarSampah, n int) {
+	var totalSampah, totalDaurUlang int
+
+	fmt.Println("==============================================================================")
+	fmt.Printf("| %-3s | %-20s | %-10s | %-12s | %-20s |\n", "No", "Jenis", "Jumlah", "Daur Ulang", "Metode Daur Ulang")
+	fmt.Println("==============================================================================")
+
+	for i := 0; i < n; i++ {
+		totalSampah += T[i].Jumlah
+		totalDaurUlang += T[i].DaurUlang
+		fmt.Printf("| %-3d | %-20s | %-10d | %-12d | %-20s |\n",
+			i+1, T[i].Jenis, T[i].Jumlah, T[i].DaurUlang, T[i].MetodeDaurUlang)
+	}
+
+	fmt.Println("==============================================================================")
+	fmt.Printf("| %-20s | %-10d | %-12d | %-20s |\n", "TOTAL", totalSampah, totalDaurUlang, "-")
+	fmt.Println("==============================================================================")
+}
+
+func main() {
+	var daftar DaftarSampah
+	var jumlahItemSaatIni int
+	var pilihan int
+	var jenisSampah string
+	var jumlahJenisSampah, jumlahDaurUlang int
+
+	fmt.Printf("Aplikasi Pengelolaan Sampah dan Daur Ulang (Array Statis MAX: %d)\n\n", MAX_SAMPAH)
+
+	for {
+		fmt.Println("===========Daftar Sampah Saat Ini===========")
+		if jumlahItemSaatIni == 0 {
+			fmt.Println("Belum ada sampah\n")
+		} else {
+			for i := 0; i < jumlahItemSaatIni; i++ {
+				fmt.Printf("Jenis: %s, Jumlah: %d, Daur Ulang: %d, Metode: %s\n",
+					daftar[i].Jenis, daftar[i].Jumlah, daftar[i].DaurUlang, daftar[i].MetodeDaurUlang)
+			}
+			fmt.Println()
+		}
+
+		fmt.Println("Menu:")
+		fmt.Println("1. Tambah Sampah")
+		fmt.Println("2. Cari Jenis Sampah")
+		fmt.Println("3. Urutkan Sampah Mengecil")
+		fmt.Println("4. Urutkan Sampah Membesar")
+		fmt.Println("5. Hapus Sampah")
+		fmt.Println("6. Tampilkan Statistik")
+		fmt.Println("0. Keluar")
+		fmt.Print("Pilih (0-6): ")
+
+		fmt.Scanln(&pilihan)
+
+		switch pilihan {
+		case 0:
+			fmt.Println("Terima kasih telah menggunakan aplikasi!")
+			return
+
+		case 1:
+			fmt.Println("\n--- Tambah Sampah ---")
+			fmt.Print("Masukkan jenis sampah: ")
+			fmt.Scanln(&jenisSampah)
+
+			fmt.Print("Masukkan jumlah sampah: ")
+			fmt.Scanln(&jumlahJenisSampah)
+
+			fmt.Print("Masukkan jumlah sampah yang didaur ulang: ")
+			fmt.Scanln(&jumlahDaurUlang)
+
+			metode, ditemukan := CariMetodeDaurUlang(jenisSampah)
+			if !ditemukan {
+				metode = "Tidak Ada"
+				fmt.Printf("Jenis sampah belum ada rekomendasi metode daur ulang, metode diset: %s\n", metode)
+			} else {
+				fmt.Printf("Metode daur ulang untuk '%s' otomatis diset: %s\n", jenisSampah, metode)
+			}
+
+			TambahSampah(&daftar, &jumlahItemSaatIni, jenisSampah, jumlahJenisSampah, jumlahDaurUlang, metode)
+			fmt.Println()
+
+		case 2:
+			fmt.Println("\n--- Cari Jenis Sampah ---")
+			fmt.Print("Masukkan jenis sampah yang dicari: ")
+			fmt.Scanln(&jenisSampah)
+
+			ditemukan, idx := CariJenisSequential(daftar, jumlahItemSaatIni, jenisSampah)
+			if ditemukan {
+				fmt.Printf("Jenis sampah '%s' ditemukan pada indeks %d.\n\n", jenisSampah, idx)
+			} else {
+				fmt.Printf("Jenis sampah '%s' tidak ditemukan.\n\n", jenisSampah)
+			}
+
+		case 3:
+			fmt.Println("\n--- Urutkan Sampah Berdasarkan Jumlah ---")
+			UrutkanJumlahDesc(&daftar, jumlahItemSaatIni)
+			fmt.Println("Data sampah berhasil diurutkan berdasarkan jumlah secara descending.\n")
+
+		case 4:
+			fmt.Println("\n--- Urutkan Sampah Berdasarkan Jumlah ---")
+			UrutkanJumlahAsc(&daftar, jumlahItemSaatIni)
+			fmt.Println("Data sampah berhasil diurutkan berdasarkan jumlah secara ascending.\n")
+
+		case 5:
+			if jumlahItemSaatIni == 0 {
+				fmt.Println("Tidak ada sampah untuk dihapus.\n")
+			} else {
+				fmt.Print("Masukkan jenis sampah yang ingin dihapus: ")
+				fmt.Scanln(&jenisSampah)
+				HapusSampah(&daftar, &jumlahItemSaatIni, jenisSampah)
+				fmt.Println()
+			}
+
+		case 6:
+			if jumlahItemSaatIni == 0 {
+				fmt.Println("Tidak ada data untuk ditampilkan.\n")
+			} else {
+				TampilkanStatistik(daftar, jumlahItemSaatIni)
+				fmt.Println()
+			}
+
+		default:
+			fmt.Println("Pilihan tidak valid. Silakan coba lagi.\n")
+		}
+	}
+}
