@@ -189,11 +189,11 @@ func main() {
 		fmt.Print("Pilih (0-8): ")
 		fmt.Scanln(&pilihan)
 
-		switch {
-			case pilihan == 0:
+		switch pilihan {
+			case 0:
 				fmt.Println("Terima kasih telah menggunakan aplikasi!")
 				return
-			case pilihan == 1:
+			case 1:
 				fmt.Println("\n--- Tambah Sampah ---")
 				fmt.Print("Masukkan kode atau jenis sampah (contoh: P19 atau pvc): ")
 				fmt.Scanln(&kodeAtauJenis)
@@ -214,7 +214,7 @@ func main() {
 					fmt.Printf("Sampah dengan kode atau jenis '%s' tidak ditemukan dalam daftar rekomendasi.\n\n", kodeAtauJenis)
 				}
 				fmt.Println()
-			case pilihan == 2:
+			case 2:
 				fmt.Println("\n--- Cari Jenis Sampah ---")
 				if jumlahItemSaatIni == 0 {
 					fmt.Printf("Belum ada sampah untuk dicari.\n\n")
@@ -234,13 +234,13 @@ func main() {
 						fmt.Printf("Sampah dengan kode atau jenis '%s' tidak ditemukan dalam daftar.\n\n", queryCari)
 					}
 				}
-			case pilihan == 3:
+			case 3:
 				UrutkanJumlahDesc(&daftar, jumlahItemSaatIni)
 				fmt.Printf("Data sampah berhasil diurutkan berdasarkan jumlah (terbanyak ke tersedikit).\n\n")
-			case pilihan == 4:
+			case 4:
 				UrutkanJumlahAsc(&daftar, jumlahItemSaatIni)
 				fmt.Printf("Data sampah berhasil diurutkan berdasarkan jumlah (tersedikit ke terbanyak).\n\n")
-			case pilihan == 5:
+			case 5:
 				if jumlahItemSaatIni == 0 {
 					fmt.Printf("Tidak ada sampah untuk dihapus.\n\n")
 				} else {
@@ -249,18 +249,18 @@ func main() {
 					HapusSampah(&daftar, &jumlahItemSaatIni, kodeAtauJenis)
 					fmt.Println()
 				}
-			case pilihan == 6:
+			case 6:
 				if jumlahItemSaatIni == 0 {
 					fmt.Printf("Tidak ada data untuk ditampilkan.\n\n")
 				} else {
 					TampilkanStatistik(daftar, jumlahItemSaatIni)
 					fmt.Println()
 				}
-			case pilihan == 7:
+			case 7:
 				fmt.Printf("\n----------- Daftar Rekomendasi Metode Daur Ulang -----------\n")
 				TampilkanDaftarRekomMetode()
 				fmt.Println()
-			case pilihan == 8:
+			case 8:
 				fmt.Printf("\n--- Edit Jumlah Sampah ---\n")
 				if jumlahItemSaatIni == 0 {
 					fmt.Printf("Belum ada data sampah untuk diedit.\n\n")
